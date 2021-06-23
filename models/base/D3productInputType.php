@@ -11,9 +11,10 @@ use Yii;
  * This is the base-model class for table "d3product_input_type".
  *
  * @property integer $id
+ * @property integer $sys_company_id
  * @property string $name
- * @property string $dictioanry_class
- * @property string $validate_rule
+ * @property string $input_class
+ * @property string $data
  *
  * @property \d3yii2\d3product\models\D3productTypeAttributes[] $d3productTypeAttributes
  * @property string $aliasModel
@@ -50,9 +51,10 @@ abstract class D3productInputType extends \yii\db\ActiveRecord
     {
         return [
             'tinyint Unsigned' => [['id'],'integer' ,'min' => 0 ,'max' => 255],
-            [['validate_rule'], 'string'],
+            'smallint Unsigned' => [['sys_company_id'],'integer' ,'min' => 0 ,'max' => 65535],
+            [['data'], 'string'],
             [['name'], 'string', 'max' => 30],
-            [['dictioanry_class'], 'string', 'max' => 50]
+            [['input_class'], 'string', 'max' => 255]
         ];
     }
 
@@ -62,10 +64,11 @@ abstract class D3productInputType extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('d3labels', 'ID'),
-            'name' => Yii::t('d3labels', 'Name'),
-            'dictioanry_class' => Yii::t('d3labels', 'Dictioanry Class'),
-            'validate_rule' => Yii::t('d3labels', 'Validate Rule'),
+            'id' => Yii::t('productadmin', 'ID'),
+            'sys_company_id' => Yii::t('productadmin', 'Sys Company ID'),
+            'name' => Yii::t('productadmin', 'Name'),
+            'input_class' => Yii::t('productadmin', 'Input Class'),
+            'data' => Yii::t('productadmin', 'Data'),
         ];
     }
 
@@ -76,8 +79,5 @@ abstract class D3productInputType extends \yii\db\ActiveRecord
     {
         return $this->hasMany(\d3yii2\d3product\models\D3productTypeAttributes::className(), ['input_type_id' => 'id'])->inverseOf('inputType');
     }
-
-
-
 
 }

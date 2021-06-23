@@ -14,6 +14,7 @@ use Yii;
  * @property integer $sys_company_id
  * @property string $name
  * @property integer $unit_id
+ * @property string $template
  *
  * @property \d3yii2\d3product\models\D3productProductTypeGroup[] $d3productProductTypeGroups
  * @property \d3yii2\d3product\models\D3productProduct[] $d3productProducts
@@ -53,9 +54,8 @@ abstract class D3productProductType extends \yii\db\ActiveRecord
     {
         return [
             'required' => [['sys_company_id'], 'required'],
-            'tinyint Unsigned' => [['unit_id'],'integer' ,'min' => 0 ,'max' => 255],
-            'smallint Unsigned' => [['id','sys_company_id'],'integer' ,'min' => 0 ,'max' => 65535],
-            [['name'], 'string', 'max' => 250],
+            'smallint Unsigned' => [['id','sys_company_id','unit_id'],'integer' ,'min' => 0 ,'max' => 65535],
+            [['name', 'template'], 'string', 'max' => 250],
             [['unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3product\models\D3productUnit::className(), 'targetAttribute' => ['unit_id' => 'id']]
         ];
     }
@@ -66,10 +66,11 @@ abstract class D3productProductType extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('d3labels', 'ID'),
-            'sys_company_id' => Yii::t('d3labels', 'Sys Company ID'),
-            'name' => Yii::t('d3labels', 'Name'),
-            'unit_id' => Yii::t('d3labels', 'Unit'),
+            'id' => Yii::t('d3product', 'ID'),
+            'sys_company_id' => Yii::t('d3product', 'Sys Company ID'),
+            'name' => Yii::t('d3product', 'Name'),
+            'unit_id' => Yii::t('d3product', 'Unit'),
+            'template' => Yii::t('d3product', 'Template'),
         ];
     }
 
@@ -79,8 +80,9 @@ abstract class D3productProductType extends \yii\db\ActiveRecord
     public function attributeHints(): array
     {
         return array_merge(parent::attributeHints(), [
-            'name' => Yii::t('d3labels', 'Name'),
-            'unit_id' => Yii::t('d3labels', 'Unit'),
+            'name' => Yii::t('d3product', 'Name'),
+            'unit_id' => Yii::t('d3product', 'Unit'),
+            'template' => Yii::t('d3product', 'Template'),
         ]);
     }
 
@@ -115,7 +117,6 @@ abstract class D3productProductType extends \yii\db\ActiveRecord
     {
         return $this->hasOne(\d3yii2\d3product\models\D3productUnit::className(), ['id' => 'unit_id'])->inverseOf('d3productProductTypes');
     }
-
 
 
 

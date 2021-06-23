@@ -2,14 +2,14 @@
 
 namespace d3yii2\d3product\dictionaries;
 
-use d3yii2\d3product\models\D3productGroup;
+use d3yii2\d3product\models\D3productProductType;
 use Yii;
 use yii\helpers\ArrayHelper;
 
-class D3productGroupDictionary
+class D3productProductTypeDictionary
 {
 
-    private const CACHE_KEY_LIST = 'D3productGroupDictionaryList';
+    private const CACHE_KEY_LIST = 'D3productProductTypeDictionaryList';
 
     public static function getList(int $sysCompanyId): array
     {
@@ -17,15 +17,15 @@ class D3productGroupDictionary
             self::createCacheKey($sysCompanyId),
             static function () use ($sysCompanyId) {
                 return ArrayHelper::map(
-                    D3productGroup::find()
+                    D3productProductType::find()
                         ->select([
-                            'id' => '`d3product_group`.`id`',
-                            'name' => '`d3product_group`.`name`',
+                            'id' => '`d3product_product_type`.`id`',
+                            'name' => '`d3product_product_type`.`name`',
                             //'name' => 'CONCAT(code,\' \',name)'
                         ])
-                        ->andWhere(['`d3product_group`.`sys_company_id`' => [$sysCompanyId, null]])
+                        ->andWhere(['`d3product_product_type`.`sys_company_id`' => [$sysCompanyId, null]])
                         ->orderBy([
-                            '`d3product_group`.`name`' => SORT_ASC,
+                            '`d3product_product_type`.`name`' => SORT_ASC,
                         ])
                         ->asArray()
                         ->all(),
@@ -56,7 +56,7 @@ class D3productGroupDictionary
 
     public static function clearCache(): void
     {
-        foreach (D3productGroup::find()
+        foreach (D3productProductType::find()
                      ->distinct()
                      ->select('sys_company_id')
                      ->column() as $sysCompanyId
@@ -64,5 +64,4 @@ class D3productGroupDictionary
             Yii::$app->cache->delete(self::createCacheKey($sysCompanyId));
         }
     }
-
 }

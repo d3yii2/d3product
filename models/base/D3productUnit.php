@@ -11,10 +11,13 @@ use Yii;
  * This is the base-model class for table "d3product_unit".
  *
  * @property integer $id
+ * @property integer $sys_company_id
  * @property string $code
  *
+ * @property \d3yii2\d3product\models\D3productAttributes[] $d3productAttributes
  * @property \d3yii2\d3product\models\D3productProductType[] $d3productProductTypes
  * @property \d3yii2\d3product\models\D3productProduct[] $d3productProducts
+ * @property \d3yii2\d3product\models\D3productTypeAttributes[] $d3productTypeAttributes
  * @property string $aliasModel
  */
 abstract class D3productUnit extends \yii\db\ActiveRecord
@@ -48,7 +51,7 @@ abstract class D3productUnit extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            'tinyint Unsigned' => [['id'],'integer' ,'min' => 0 ,'max' => 255],
+            'smallint Unsigned' => [['id','sys_company_id'],'integer' ,'min' => 0 ,'max' => 65535],
             [['code'], 'string', 'max' => 20]
         ];
     }
@@ -59,8 +62,9 @@ abstract class D3productUnit extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('d3labels', 'ID'),
-            'code' => Yii::t('d3labels', 'Code'),
+            'id' => Yii::t('d3product', 'ID'),
+            'sys_company_id' => Yii::t('d3product', 'Sys Company ID'),
+            'code' => Yii::t('d3product', 'Code'),
         ];
     }
 
@@ -70,8 +74,16 @@ abstract class D3productUnit extends \yii\db\ActiveRecord
     public function attributeHints(): array
     {
         return array_merge(parent::attributeHints(), [
-            'code' => Yii::t('d3labels', 'Code'),
+            'code' => Yii::t('d3product', 'Code'),
         ]);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getD3productAttributes()
+    {
+        return $this->hasMany(\d3yii2\d3product\models\D3productAttributes::className(), ['unit_id' => 'id'])->inverseOf('unit');
     }
 
     /**
@@ -90,7 +102,11 @@ abstract class D3productUnit extends \yii\db\ActiveRecord
         return $this->hasMany(\d3yii2\d3product\models\D3productProduct::className(), ['unit_id' => 'id'])->inverseOf('unit');
     }
 
-
-
-
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getD3productTypeAttributes()
+    {
+        return $this->hasMany(\d3yii2\d3product\models\D3productTypeAttributes::className(), ['unit_id' => 'id'])->inverseOf('unit');
+    }
 }

@@ -38,18 +38,6 @@ abstract class D3productProduct extends \yii\db\ActiveRecord
         return 'd3product_product';
     }
 
-
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        $behaviors = [
-        ];
-        return $behaviors;
-    }
-
-
     /**
      * @inheritdoc
      */
@@ -57,12 +45,11 @@ abstract class D3productProduct extends \yii\db\ActiveRecord
     {
         return [
             'required' => [['sys_company_id'], 'required'],
-            'tinyint Unsigned' => [['unit_id'],'integer' ,'min' => 0 ,'max' => 255],
-            'smallint Unsigned' => [['id','sys_company_id','product_type_id'],'integer' ,'min' => 0 ,'max' => 65535],
+            'smallint Unsigned' => [['id','sys_company_id','unit_id','product_type_id'],'integer' ,'min' => 0 ,'max' => 65535],
             [['description'], 'string'],
             [['name'], 'string', 'max' => 256],
-            [['product_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3product\models\D3productProductType::className(), 'targetAttribute' => ['product_type_id' => 'id']],
-            [['unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3product\models\D3productUnit::className(), 'targetAttribute' => ['unit_id' => 'id']]
+            [['unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3product\models\D3productUnit::className(), 'targetAttribute' => ['unit_id' => 'id']],
+            [['product_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3product\models\D3productProductType::className(), 'targetAttribute' => ['product_type_id' => 'id']]
         ];
     }
 
@@ -152,6 +139,4 @@ abstract class D3productProduct extends \yii\db\ActiveRecord
     {
         return new \d3yii2\d3product\models\D3productProductQuery(get_called_class());
     }
-
-
 }

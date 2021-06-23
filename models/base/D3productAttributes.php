@@ -13,10 +13,15 @@ use Yii;
  * @property integer $id
  * @property integer $product_id
  * @property integer $type_attribute_id
+ * @property string $name
+ * @property integer $input_type_id
+ * @property integer $unit_id
  * @property string $value
  *
+ * @property \d3yii2\d3product\models\D3productInputType $inputType
  * @property \d3yii2\d3product\models\D3productProduct $product
  * @property \d3yii2\d3product\models\D3productTypeAttributes $typeAttribute
+ * @property \d3yii2\d3product\models\D3productUnit $unit
  * @property string $aliasModel
  */
 abstract class D3productAttributes extends \yii\db\ActiveRecord
@@ -32,28 +37,20 @@ abstract class D3productAttributes extends \yii\db\ActiveRecord
         return 'd3product_attributes';
     }
 
-
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        $behaviors = [
-        ];
-        return $behaviors;
-    }
-
-
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            'required' => [['product_id', 'type_attribute_id'], 'required'],
-            'smallint Unsigned' => [['product_id','type_attribute_id'],'integer' ,'min' => 0 ,'max' => 65535],
+            'required' => [['product_id', 'type_attribute_id', 'input_type_id', 'unit_id'], 'required'],
+            'tinyint Unsigned' => [['input_type_id'],'integer' ,'min' => 0 ,'max' => 255],
+            'smallint Unsigned' => [['product_id','type_attribute_id','unit_id'],'integer' ,'min' => 0 ,'max' => 65535],
             'integer Unsigned' => [['id'],'integer' ,'min' => 0 ,'max' => 4294967295],
+            [['name'], 'string', 'max' => 250],
             [['value'], 'string', 'max' => 50],
+            [['unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3product\models\D3productUnit::className(), 'targetAttribute' => ['unit_id' => 'id']],
+            [['input_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3product\models\D3productInputType::className(), 'targetAttribute' => ['input_type_id' => 'id']],
             [['product_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3product\models\D3productProduct::className(), 'targetAttribute' => ['product_id' => 'id']],
             [['type_attribute_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3product\models\D3productTypeAttributes::className(), 'targetAttribute' => ['type_attribute_id' => 'id']]
         ];
@@ -65,10 +62,13 @@ abstract class D3productAttributes extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('d3labels', 'ID'),
-            'product_id' => Yii::t('d3labels', 'Product'),
-            'type_attribute_id' => Yii::t('d3labels', 'Product Type'),
-            'value' => Yii::t('d3labels', 'Value'),
+            'id' => Yii::t('d3product', 'ID'),
+            'product_id' => Yii::t('d3product', 'Product'),
+            'type_attribute_id' => Yii::t('d3product', 'Product Type'),
+            'name' => Yii::t('d3product', 'Name'),
+            'input_type_id' => Yii::t('d3product', 'Input Type'),
+            'unit_id' => Yii::t('d3product', 'Unit'),
+            'value' => Yii::t('d3product', 'Value'),
         ];
     }
 
@@ -78,10 +78,21 @@ abstract class D3productAttributes extends \yii\db\ActiveRecord
     public function attributeHints(): array
     {
         return array_merge(parent::attributeHints(), [
-            'product_id' => Yii::t('d3labels', 'Product'),
-            'type_attribute_id' => Yii::t('d3labels', 'Product Type'),
-            'value' => Yii::t('d3labels', 'Value'),
+            'product_id' => Yii::t('d3product', 'Product'),
+            'type_attribute_id' => Yii::t('d3product', 'Product Type'),
+            'name' => Yii::t('d3product', 'Name'),
+            'input_type_id' => Yii::t('d3product', 'Input Type'),
+            'unit_id' => Yii::t('d3product', 'Unit'),
+            'value' => Yii::t('d3product', 'Value'),
         ]);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getInputType()
+    {
+        return $this->hasOne(\d3yii2\d3product\models\D3productInputType::className(), ['id' => 'input_type_id'])->inverseOf('d3productAttributes');
     }
 
     /**
@@ -100,6 +111,13 @@ abstract class D3productAttributes extends \yii\db\ActiveRecord
         return $this->hasOne(\d3yii2\d3product\models\D3productTypeAttributes::className(), ['id' => 'type_attribute_id'])->inverseOf('d3productAttributes');
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getUnit()
+    {
+        return $this->hasOne(\d3yii2\d3product\models\D3productUnit::className(), ['id' => 'unit_id'])->inverseOf('d3productAttributes');
+    }
 
 
 

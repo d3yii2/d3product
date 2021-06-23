@@ -2,14 +2,14 @@
 
 namespace d3yii2\d3product\dictionaries;
 
-use d3yii2\d3product\models\D3productGroup;
+use d3yii2\d3product\models\D3productUnit;
 use Yii;
 use yii\helpers\ArrayHelper;
 
-class D3productGroupDictionary
+class D3productUnitDictionary
 {
 
-    private const CACHE_KEY_LIST = 'D3productGroupDictionaryList';
+    private const CACHE_KEY_LIST = 'D3productUnitDictionaryList';
 
     public static function getList(int $sysCompanyId): array
     {
@@ -17,15 +17,15 @@ class D3productGroupDictionary
             self::createCacheKey($sysCompanyId),
             static function () use ($sysCompanyId) {
                 return ArrayHelper::map(
-                    D3productGroup::find()
+                    D3productUnit::find()
                         ->select([
-                            'id' => '`d3product_group`.`id`',
-                            'name' => '`d3product_group`.`name`',
+                            'id' => '`d3product_unit`.`id`',
+                            'name' => '`d3product_unit`.`code`',
                             //'name' => 'CONCAT(code,\' \',name)'
                         ])
-                        ->andWhere(['`d3product_group`.`sys_company_id`' => [$sysCompanyId, null]])
+                        ->andWhere(['`d3product_unit`.`sys_company_id`' => $sysCompanyId])
                         ->orderBy([
-                            '`d3product_group`.`name`' => SORT_ASC,
+                            '`d3product_unit`.`code`' => SORT_ASC,
                         ])
                         ->asArray()
                         ->all(),
@@ -56,7 +56,7 @@ class D3productGroupDictionary
 
     public static function clearCache(): void
     {
-        foreach (D3productGroup::find()
+        foreach (D3productUnit::find()
                      ->distinct()
                      ->select('sys_company_id')
                      ->column() as $sysCompanyId
@@ -64,5 +64,4 @@ class D3productGroupDictionary
             Yii::$app->cache->delete(self::createCacheKey($sysCompanyId));
         }
     }
-
 }
