@@ -9,7 +9,7 @@ use yii\helpers\ArrayHelper;
 class D3productInputTypeDictionary
 {
 
-    private const CACHE_KEY_LIST = 'D3productInputTypeDictionaryList';
+    private const CACHE_KEY_LIST = 'D3productInputTypeDictionaryLis1';
 
     public static function getList(int $sysCompanyId): array
     {

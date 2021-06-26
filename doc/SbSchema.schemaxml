@@ -6,18 +6,25 @@
 <canvas zoom="100">
 <tables>
 <table name="d3product_attributes" view="colnames">
-<left>923</left>
-<top>306</top>
+<left>687</left>
+<top>469</top>
 <width>153</width>
-<height>131</height>
+<height>169</height>
 <sql_create_table>CREATE TABLE `d3product_attributes` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `product_id` smallint(5) unsigned NOT NULL COMMENT 'Product',
   `type_attribute_id` smallint(5) unsigned NOT NULL COMMENT 'Product Type',
+  `name` varchar(250) DEFAULT NULL COMMENT 'Name',
+  `input_type_id` tinyint(3) unsigned NOT NULL COMMENT 'Input Type',
+  `unit_id` smallint(5) unsigned NOT NULL COMMENT 'Unit',
   `value` varchar(50) DEFAULT NULL COMMENT 'Value',
   PRIMARY KEY (`id`),
   KEY `product3_attributes_ibfk_product` (`product_id`),
   KEY `product3_attributes_ibfk_type_attribute` (`type_attribute_id`),
+  KEY `unit_id` (`unit_id`),
+  KEY `input_type_id` (`input_type_id`),
+  CONSTRAINT `d3product_attributes_ibfk_1` FOREIGN KEY (`unit_id`) REFERENCES `d3product_unit` (`id`),
+  CONSTRAINT `d3product_attributes_ibfk_2` FOREIGN KEY (`input_type_id`) REFERENCES `d3product_input_type` (`id`),
   CONSTRAINT `d3product_attributes_ibfk_product` FOREIGN KEY (`product_id`) REFERENCES `d3product_product` (`id`),
   CONSTRAINT `d3product_attributes_ibfk_type_attribute` FOREIGN KEY (`type_attribute_id`) REFERENCES `d3product_type_attributes` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1</sql_create_table>
@@ -52,8 +59,8 @@
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1</sql_create_table>
 </table>
 <table name="d3product_group" view="colnames">
-<left>849</left>
-<top>470</top>
+<left>900</left>
+<top>373</top>
 <width>133</width>
 <height>114</height>
 <sql_create_table>CREATE TABLE `d3product_group` (
@@ -64,8 +71,8 @@
 ) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1</sql_create_table>
 </table>
 <table name="d3product_input_type" view="colnames">
-<left>150</left>
-<top>647</top>
+<left>870</left>
+<top>670</top>
 <width>162</width>
 <height>136</height>
 <sql_create_table>CREATE TABLE `d3product_input_type` (
@@ -99,33 +106,34 @@
   `sys_company_id` smallint(5) unsigned NOT NULL,
   `name` varchar(256) CHARACTER SET utf8 DEFAULT NULL COMMENT 'Name',
   `description` text CHARACTER SET utf8 COMMENT 'Description',
-  `unit_id` tinyint(3) unsigned DEFAULT NULL COMMENT 'Unit',
+  `unit_id` smallint(3) unsigned DEFAULT NULL COMMENT 'Unit',
   `product_type_id` smallint(5) unsigned DEFAULT NULL COMMENT 'Type',
   PRIMARY KEY (`id`),
   KEY `product3_product_ibfk_product_type` (`product_type_id`),
   KEY `product3_product_ibfk_unit` (`unit_id`),
-  CONSTRAINT `d3product_product_ibfk_product_type` FOREIGN KEY (`product_type_id`) REFERENCES `d3product_product_type` (`id`),
-  CONSTRAINT `d3product_product_ibfk_unit` FOREIGN KEY (`unit_id`) REFERENCES `d3product_unit` (`id`)
+  CONSTRAINT `d3product_product_ibfk_1` FOREIGN KEY (`unit_id`) REFERENCES `d3product_unit` (`id`),
+  CONSTRAINT `d3product_product_ibfk_product_type` FOREIGN KEY (`product_type_id`) REFERENCES `d3product_product_type` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1</sql_create_table>
 </table>
 <table name="d3product_product_type" view="colnames">
-<left>182</left>
-<top>365</top>
+<left>5</left>
+<top>325</top>
 <width>171</width>
 <height>116</height>
 <sql_create_table>CREATE TABLE `d3product_product_type` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT,
   `sys_company_id` smallint(5) unsigned NOT NULL,
   `name` varchar(250) CHARACTER SET utf8 DEFAULT NULL COMMENT 'Name',
-  `unit_id` tinyint(3) unsigned DEFAULT NULL COMMENT 'Unit',
+  `unit_id` smallint(3) unsigned DEFAULT NULL COMMENT 'Unit',
+  `template` varchar(250) CHARACTER SET utf8 DEFAULT NULL COMMENT 'Template',
   PRIMARY KEY (`id`),
   KEY `product3_product_type_ibfk_unit` (`unit_id`),
-  CONSTRAINT `d3product_product_type_ibfk_unit` FOREIGN KEY (`unit_id`) REFERENCES `d3product_unit` (`id`)
+  CONSTRAINT `d3product_product_type_ibfk_1` FOREIGN KEY (`unit_id`) REFERENCES `d3product_unit` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=latin1</sql_create_table>
 </table>
 <table name="d3product_product_type_group" view="colnames">
-<left>398</left>
-<top>422</top>
+<left>380</left>
+<top>350</top>
 <width>210</width>
 <height>100</height>
 <sql_create_table>CREATE TABLE `d3product_product_type_group` (
@@ -137,11 +145,11 @@
   KEY `product3_product_type_group_ibfk_group` (`group_id`),
   CONSTRAINT `d3product_product_type_group_ibfk_group` FOREIGN KEY (`group_id`) REFERENCES `d3product_group` (`id`),
   CONSTRAINT `d3product_product_type_group_ibfk_product_type` FOREIGN KEY (`product_type_id`) REFERENCES `d3product_product_type` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1</sql_create_table>
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=latin1</sql_create_table>
 </table>
 <table name="d3product_type_attributes" view="colnames">
-<left>389</left>
-<top>598</top>
+<left>417</left>
+<top>461</top>
 <width>179</width>
 <height>131</height>
 <sql_create_table>CREATE TABLE `d3product_type_attributes` (
@@ -149,24 +157,27 @@
   `product_type_id` smallint(5) unsigned DEFAULT NULL COMMENT 'Product Type',
   `name` varchar(50) CHARACTER SET utf8 DEFAULT NULL COMMENT 'Attribute Name',
   `input_type_id` tinyint(5) unsigned NOT NULL COMMENT 'Input Type',
+  `unit_id` smallint(5) unsigned DEFAULT NULL COMMENT 'Unit',
   PRIMARY KEY (`id`),
   KEY `product3_type_attributes_ibfk_input_type` (`input_type_id`),
   KEY `product3_type_attributes_ibfk_product_type` (`product_type_id`),
+  KEY `unit_id` (`unit_id`),
+  CONSTRAINT `d3product_type_attributes_ibfk_1` FOREIGN KEY (`unit_id`) REFERENCES `d3product_unit` (`id`),
   CONSTRAINT `d3product_type_attributes_ibfk_input_type` FOREIGN KEY (`input_type_id`) REFERENCES `d3product_input_type` (`id`),
   CONSTRAINT `d3product_type_attributes_ibfk_product_type` FOREIGN KEY (`product_type_id`) REFERENCES `d3product_product_type` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1</sql_create_table>
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=latin1</sql_create_table>
 </table>
 <table name="d3product_unit" view="colnames">
-<left>12</left>
-<top>117</top>
+<left>210</left>
+<top>564</top>
 <width>130</width>
 <height>97</height>
 <sql_create_table>CREATE TABLE `d3product_unit` (
-  `id` tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
+  `id` smallint(3) unsigned NOT NULL AUTO_INCREMENT,
   `sys_company_id` smallint(5) unsigned DEFAULT NULL,
   `code` char(20) DEFAULT NULL COMMENT 'Code',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1</sql_create_table>
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1</sql_create_table>
 </table>
 <table name="d3product_product_price" view="colnames">
 <left>588</left>
@@ -186,8 +197,8 @@
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1</sql_create_table>
 </table>
 <table name="d3product_product_group" view="colnames">
-<left>633</left>
-<top>329</top>
+<left>650</left>
+<top>295</top>
 <width>173</width>
 <height>114</height>
 <sql_create_table>CREATE TABLE `d3product_product_group` (

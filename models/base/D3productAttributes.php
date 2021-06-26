@@ -37,13 +37,25 @@ abstract class D3productAttributes extends \yii\db\ActiveRecord
         return 'd3product_attributes';
     }
 
+
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        $behaviors = [
+        ];
+        return $behaviors;
+    }
+
+
     /**
      * @inheritdoc
      */
     public function rules()
     {
         return [
-            'required' => [['product_id', 'type_attribute_id', 'input_type_id', 'unit_id'], 'required'],
+            'required' => [['product_id', 'input_type_id'], 'required'],
             'tinyint Unsigned' => [['input_type_id'],'integer' ,'min' => 0 ,'max' => 255],
             'smallint Unsigned' => [['product_id','type_attribute_id','unit_id'],'integer' ,'min' => 0 ,'max' => 65535],
             'integer Unsigned' => [['id'],'integer' ,'min' => 0 ,'max' => 4294967295],
