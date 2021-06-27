@@ -18,9 +18,7 @@ use Yii;
  * @property integer $product_type_id
  *
  * @property \d3yii2\d3product\models\D3productAttributes[] $d3productAttributes
- * @property \d3yii2\d3product\models\D3productCodes[] $d3productCodes
  * @property \d3yii2\d3product\models\D3productProductGroup[] $d3productProductGroups
- * @property \d3yii2\d3product\models\D3productProductPrice[] $d3productProductPrices
  * @property \d3yii2\d3product\models\D3productProductType $productType
  * @property \d3yii2\d3product\models\D3productUnit $unit
  * @property string $aliasModel
@@ -37,6 +35,18 @@ abstract class D3productProduct extends \yii\db\ActiveRecord
     {
         return 'd3product_product';
     }
+
+
+    /**
+     * @inheritdoc
+     */
+    public function behaviors()
+    {
+        $behaviors = [
+        ];
+        return $behaviors;
+    }
+
 
     /**
      * @inheritdoc
@@ -92,25 +102,9 @@ abstract class D3productProduct extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getD3productCodes()
-    {
-        return $this->hasMany(\d3yii2\d3product\models\D3productCodes::className(), ['product_id' => 'id'])->inverseOf('product');
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
     public function getD3productProductGroups()
     {
         return $this->hasMany(\d3yii2\d3product\models\D3productProductGroup::className(), ['product_id' => 'id'])->inverseOf('product');
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getD3productProductPrices()
-    {
-        return $this->hasMany(\d3yii2\d3product\models\D3productProductPrice::className(), ['product_id' => 'id'])->inverseOf('product');
     }
 
     /**
@@ -139,4 +133,5 @@ abstract class D3productProduct extends \yii\db\ActiveRecord
     {
         return new \d3yii2\d3product\models\D3productProductQuery(get_called_class());
     }
+
 }
