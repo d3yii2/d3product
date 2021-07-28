@@ -12,6 +12,7 @@ use Yii;
  *
  * @property integer $id
  * @property integer $product_type_id
+ * @property integer $sqn
  * @property string $name
  * @property integer $input_type_id
  * @property integer $unit_id
@@ -54,7 +55,7 @@ abstract class D3productTypeAttributes extends \yii\db\ActiveRecord
     {
         return [
             'required' => [['input_type_id'], 'required'],
-            'tinyint Unsigned' => [['input_type_id'],'integer' ,'min' => 0 ,'max' => 255],
+            'tinyint Unsigned' => [['sqn','input_type_id'],'integer' ,'min' => 0 ,'max' => 255],
             'smallint Unsigned' => [['id','product_type_id','unit_id'],'integer' ,'min' => 0 ,'max' => 65535],
             [['name'], 'string', 'max' => 50],
             [['unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3product\models\D3productUnit::className(), 'targetAttribute' => ['unit_id' => 'id']],
@@ -71,6 +72,7 @@ abstract class D3productTypeAttributes extends \yii\db\ActiveRecord
         return [
             'id' => Yii::t('d3product', 'ID'),
             'product_type_id' => Yii::t('d3product', 'Product Type'),
+            'sqn' => Yii::t('d3product', 'SQN'),
             'name' => Yii::t('d3product', 'Attribute Name'),
             'input_type_id' => Yii::t('d3product', 'Input Type'),
             'unit_id' => Yii::t('d3product', 'Unit'),
@@ -84,6 +86,7 @@ abstract class D3productTypeAttributes extends \yii\db\ActiveRecord
     {
         return array_merge(parent::attributeHints(), [
             'product_type_id' => Yii::t('d3product', 'Product Type'),
+            'sqn' => Yii::t('d3product', 'SQN'),
             'name' => Yii::t('d3product', 'Attribute Name'),
             'input_type_id' => Yii::t('d3product', 'Input Type'),
             'unit_id' => Yii::t('d3product', 'Unit'),

@@ -66,6 +66,7 @@ class D3productProduct extends BaseD3productProduct
             $productAttribute = new D3productAttributes();
             $productAttribute->product_id = $this->id;
             $productAttribute->type_attribute_id = $typeAttribute->id;
+            $productAttribute->sqn = $typeAttribute->sqn;
             $productAttribute->name = $typeAttribute->name;
             $productAttribute->input_type_id = $typeAttribute->input_type_id;
             $productAttribute->unit_id = $typeAttribute->unit_id;
@@ -104,15 +105,6 @@ class D3productProduct extends BaseD3productProduct
             }
         }
 
-        foreach ($this->d3productCodes as $code) {
-            $code->id = null;
-            $code->isNewRecord = true;
-            $code->product_id = $model->id;
-            if (!$code->save()) {
-                throw new D3ActiveRecordException($code);
-            }
-        }
-
         foreach ($this->d3productProductGroups as $productGroups) {
             $productGroups->id = null;
             $productGroups->isNewRecord = true;
@@ -122,14 +114,14 @@ class D3productProduct extends BaseD3productProduct
             }
         }
 
-        foreach ($this->d3productProductPrices as $productPrice) {
-            $productPrice->id = null;
-            $productPrice->isNewRecord = true;
-            $productPrice->product_id = $model->id;
-            if (!$productPrice->save()) {
-                throw new D3ActiveRecordException($productPrice);
-            }
-        }
+//        foreach ($this->d3productProductPrices as $productPrice) {
+//            $productPrice->id = null;
+//            $productPrice->isNewRecord = true;
+//            $productPrice->product_id = $model->id;
+//            if (!$productPrice->save()) {
+//                throw new D3ActiveRecordException($productPrice);
+//            }
+//        }
         return $model;
     }
 
