@@ -135,4 +135,9 @@ class D3productProduct extends BaseD3productProduct
         return str_replace($from, $to, $this->productType->template);
     }
 
+    public function getLabel(): string
+    {
+        return $this->productType->name . ' ' . $this->name;
+    }
+
 }
