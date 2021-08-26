@@ -27,7 +27,9 @@ class D3productProduct extends BaseD3productProduct
     }
 
     /**
-     * @throws \d3system\exceptions\D3ActiveRecordException
+     * @return false|int
+     * @throws \Throwable
+     * @throws \yii\db\StaleObjectException
      */
 
     public function delete()
@@ -50,7 +52,7 @@ class D3productProduct extends BaseD3productProduct
         return parent::delete();
     }
 
-    public function createFromProductType()
+    public function createFromProductType(): bool
     {
         $this->save();
 
@@ -140,4 +142,16 @@ class D3productProduct extends BaseD3productProduct
         return $this->productType->name . ' ' . $this->name;
     }
 
+    /**
+     * @return \d3yii2\d3product\models\D3productTypeFormula[]
+     */
+    public function getFormulasFromBaseUnit(): array
+    {
+        return $this
+         ->productType
+         ->getD3productTypeFormulas()
+         ->innerJoin('d3product_unit_formula', 'd3product_unit_formula.id = d3product_type_formula.unit_formula_id')
+         ->andWhere(['d3product_unit_formula.from_unit_id' => $this->unit_id])
+        ->all();
+    }
 }

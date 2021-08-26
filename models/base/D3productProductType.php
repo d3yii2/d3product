@@ -19,6 +19,7 @@ use Yii;
  * @property \d3yii2\d3product\models\D3productProductTypeGroup[] $d3productProductTypeGroups
  * @property \d3yii2\d3product\models\D3productProduct[] $d3productProducts
  * @property \d3yii2\d3product\models\D3productTypeAttributes[] $d3productTypeAttributes
+ * @property \d3yii2\d3product\models\D3productTypeFormula[] $d3productTypeFormulas
  * @property \d3yii2\d3product\models\D3productUnit $unit
  * @property string $aliasModel
  */
@@ -34,18 +35,6 @@ abstract class D3productProductType extends \yii\db\ActiveRecord
     {
         return 'd3product_product_type';
     }
-
-
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        $behaviors = [
-        ];
-        return $behaviors;
-    }
-
 
     /**
      * @inheritdoc
@@ -108,6 +97,14 @@ abstract class D3productProductType extends \yii\db\ActiveRecord
     public function getD3productTypeAttributes()
     {
         return $this->hasMany(\d3yii2\d3product\models\D3productTypeAttributes::className(), ['product_type_id' => 'id'])->inverseOf('productType');
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getD3productTypeFormulas()
+    {
+        return $this->hasMany(\d3yii2\d3product\models\D3productTypeFormula::className(), ['product_type_id' => 'id'])->inverseOf('productType');
     }
 
     /**

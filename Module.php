@@ -11,8 +11,11 @@ class Module extends D3Module
 
     public $leftMenu = 'd3yii2\d3product\LeftMenu';
 
+    /** @var array  */
+    public $formulasFieldMapping = [];
+
     public function getLabel(): string
     {
-        return Yii::t('d3product','d3product');
+        return Yii::t('d3product', 'D3 Product');
     }
 }
