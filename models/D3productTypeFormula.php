@@ -14,4 +14,5 @@ class D3productTypeFormula extends BaseD3productTypeFormula
     {
         return D3productUnitFormulaDictionary::getList();
     }
+
 }

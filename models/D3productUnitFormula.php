@@ -26,4 +26,17 @@ class D3productUnitFormula extends BaseD3productUnitFormula
     {
         return D3productUnitFormulaDictionary::getList();
     }
+
+
+    public function calc($attributes, $qnt)
+    {
+        $formulaObject = new $this->formula;
+        $formulaObject->loadAttributes($attributes);
+
+        if (($calcQnt = $formulaObject->calc($qnt)) === false) {
+            return null;
+        }
+
+        return $calcQnt;
+    }
 }
