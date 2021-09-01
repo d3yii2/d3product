@@ -6,7 +6,6 @@ namespace d3yii2\d3product\models\base;
 
 use Yii;
 
-
 /**
  * This is the base-model class for table "d3product_unit_formula".
  *
@@ -33,18 +32,6 @@ abstract class D3productUnitFormula extends \yii\db\ActiveRecord
     {
         return 'd3product_unit_formula';
     }
-
-
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        $behaviors = [
-        ];
-        return $behaviors;
-    }
-
 
     /**
      * @inheritdoc

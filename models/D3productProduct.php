@@ -149,36 +149,6 @@ class D3productProduct extends BaseD3productProduct
     }
 
     /**
-     * get query for D3productTypeFormulas for product base unit
-     * @return \yii\db\ActiveQuery
-     */
-    public function getFormulasFromBaseQuery(): ActiveQuery
-    {
-        return $this
-         ->productType
-         ->getD3productTypeFormulas()
-         ->innerJoin('d3product_unit_formula', 'd3product_unit_formula.id = d3product_type_formula.unit_formula_id')
-         ->andWhere([
-             'd3product_unit_formula.from_unit_id' => $this->unit_id,
-         ]);
-    }
-
-    /**
-     * get D3productTypeFormula for converting to $toUnitId
-     * @param int $toUnitId
-     * @return \d3yii2\d3product\models\D3productTypeFormula|null
-     */
-    public function getFormulasFromBaseToUnitOne(int $toUnitId): ?D3productTypeFormula
-    {
-        return $this
-         ->getFormulasFromBaseQuery()
-         ->andWhere([
-             'd3product_unit_formula.to_unit_id' => $toUnitId,
-         ])
-         ->one();
-    }
-
-    /**
      * get product attributes values array
      * @return array
      */
@@ -191,19 +161,32 @@ class D3productProduct extends BaseD3productProduct
         );
     }
 
-    /**
-     * get converted to all units array: unit_id => qnt
-     * @param float $qnt
-     * @return array
-     */
-    public function getUnitsQnt(float $qnt): array
+    public function unitConvertFromTo(float $qnt, int $fromUnitId, int $toUnitId)
     {
-        $list = [];
-        /** @var \d3yii2\d3product\models\D3productTypeFormula $formulaType */
-        foreach ($this->getFormulasFromBaseQuery()->all() as $formulaType) {
-            $formula = $formulaType->unitFormula;
-            $list[$formula->to_unit_id] = $formula->calc($this->getProductAttributes(), $qnt) ?? '???';
+        $query = D3productUnitFormula::find()
+            ->innerJoinWith('d3productTypeFormulas')
+            ->andWhere([
+                'd3product_type_formula.product_type_id' => $this->product_type_id,
+                'd3product_unit_formula.from_unit_id' => $fromUnitId,
+                'd3product_unit_formula.to_unit_id' => $toUnitId,
+            ]);
+        if (!$formula = $query
+            ->one()) {
+            return null;
         }
-        return $list;
+        return $formula->calc($this->getProductAttributes(), $qnt);
     }
+
+    public function getToUnitIds(int $fromUnitId): array
+    {
+        return D3productUnitFormula::find()
+            ->select('to_unit_id')
+            ->innerJoinWith('d3productTypeFormulas')
+            ->andWhere([
+                'd3product_type_formula.product_type_id' => $this->product_type_id,
+                'd3product_unit_formula.from_unit_id' => $fromUnitId,
+            ])
+            ->column();
+    }
+
 }

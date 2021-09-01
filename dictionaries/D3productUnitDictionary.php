@@ -11,8 +11,11 @@ class D3productUnitDictionary
 
     private const CACHE_KEY_LIST = 'D3productUnitDictionaryList';
 
-    public static function getList(int $sysCompanyId): array
+    public static function getList(int $sysCompanyId = null): array
     {
+        if (!$sysCompanyId) {
+            $sysCompanyId = Yii::$app->SysCmp->getActiveCompanyId();
+        }
         return Yii::$app->cache->getOrSet(
             self::createCacheKey($sysCompanyId),
             static function () use ($sysCompanyId) {
