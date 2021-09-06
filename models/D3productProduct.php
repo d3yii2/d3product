@@ -5,7 +5,6 @@ namespace d3yii2\d3product\models;
 use d3modules\d3productadmin\models\D3productAttributes;
 use d3system\exceptions\D3ActiveRecordException;
 use d3yii2\d3product\models\base\D3productProduct as BaseD3productProduct;
-use yii\db\ActiveQuery;
 use yii\db\Exception;
 use yii\helpers\ArrayHelper;
 
