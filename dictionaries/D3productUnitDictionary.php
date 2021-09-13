@@ -47,7 +47,7 @@ class D3productUnitDictionary
      * @param int $id
      * @return string|null
      */
-    public static function getLabel(int $sysCompanyId, int $id): ?string
+    public static function getLabel(int $sysCompanyId, ?int $id): ?string
     {
         return self::getList($sysCompanyId)[$id] ?? null;
     }
