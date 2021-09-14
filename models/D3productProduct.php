@@ -188,4 +188,17 @@ class D3productProduct extends BaseD3productProduct
             ->column();
     }
 
+    public function getFromUnitToBaseUnitsIds(): array
+    {
+        $list = D3productUnitFormula::find()
+            ->select('from_unit_id  unitId')
+            ->innerJoinWith('d3productTypeFormulas')
+            ->andWhere([
+                'd3product_type_formula.product_type_id' => $this->product_type_id,
+                'd3product_unit_formula.to_unit_id' => $this->unit_id,
+            ])
+            ->column();
+        $list[] = (string)$this->unit_id;
+        return $list;
+    }
 }
