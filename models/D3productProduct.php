@@ -162,6 +162,9 @@ class D3productProduct extends BaseD3productProduct
 
     public function unitConvertFromTo(float $qnt, int $fromUnitId, int $toUnitId)
     {
+        if ($fromUnitId === $toUnitId) {
+            return $qnt;
+        }
         $query = D3productUnitFormula::find()
             ->innerJoinWith('d3productTypeFormulas')
             ->andWhere([
