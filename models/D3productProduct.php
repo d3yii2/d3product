@@ -104,6 +104,9 @@ class D3productProduct extends BaseD3productProduct
         }
 
         foreach ($this->d3productAttributes as $attribute) {
+            if ($attribute->isTemplate()) {
+                continue;
+            }
             $attribute->id = null;
             $attribute->isNewRecord = true;
             $attribute->product_id = $model->id;
@@ -160,7 +163,10 @@ class D3productProduct extends BaseD3productProduct
         );
     }
 
-    public function unitConvertFromTo(float $qnt, int $fromUnitId, int $toUnitId)
+    /**
+     * @throws \yii\base\Exception
+     */
+    public function unitConvertFromTo(float $qnt, int $fromUnitId, int $toUnitId): ?float
     {
         if ($fromUnitId === $toUnitId) {
             return $qnt;

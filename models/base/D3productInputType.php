@@ -6,7 +6,6 @@ namespace d3yii2\d3product\models\base;
 
 use Yii;
 
-
 /**
  * This is the base-model class for table "d3product_input_type".
  *
@@ -31,18 +30,6 @@ abstract class D3productInputType extends \yii\db\ActiveRecord
     {
         return 'd3product_input_type';
     }
-
-
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        $behaviors = [
-        ];
-        return $behaviors;
-    }
-
 
     /**
      * @inheritdoc

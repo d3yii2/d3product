@@ -2,8 +2,11 @@
 
 namespace d3yii2\d3product\models;
 
+use d3modules\d4storei\models\Formulas\BaseFormula;
 use d3yii2\d3product\dictionaries\D3productUnitFormulaDictionary;
-use \d3yii2\d3product\models\base\D3productUnitFormula as BaseD3productUnitFormula;
+use d3yii2\d3product\models\base\D3productUnitFormula as BaseD3productUnitFormula;
+use yii\base\Exception;
+use yii\helpers\VarDumper;
 
 /**
  * This is the model class for table "d3product_unit_formula".
@@ -28,13 +31,17 @@ class D3productUnitFormula extends BaseD3productUnitFormula
     }
 
 
+    /**
+     * @throws \yii\base\Exception
+     */
     public function calc($attributes, $qnt)
     {
+        /** @var BaseFormula $formulaObject */
         $formulaObject = new $this->formula;
         $formulaObject->loadAttributes($attributes);
 
         if (($calcQnt = $formulaObject->calc($qnt)) === false) {
-            return null;
+            throw new Exception('Calculation error. Formula' . $this->formula . ' Errors: ' . VarDumper::dumpAsString($formulaObject->getErrors()));
         }
 
         return $calcQnt;
