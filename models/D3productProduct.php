@@ -3,6 +3,7 @@
 namespace d3yii2\d3product\models;
 
 use d3modules\d3productadmin\models\D3productAttributes;
+use d3modules\d3productadmin\ModuleConfig;
 use d3system\exceptions\D3ActiveRecordException;
 use d3yii2\d3product\models\base\D3productProduct as BaseD3productProduct;
 use yii\db\Exception;
@@ -57,9 +58,17 @@ class D3productProduct extends BaseD3productProduct
     /**
      * @throws \d3system\exceptions\D3ActiveRecordException
      */
-    public function createFromProductType(): bool
+    public function createFromProductType(int $productTypeId): bool
     {
-        $this->save();
+        if (!$productType = D3productProductType::findOne($productTypeId)) {
+            throw new Exception(' Can not find productType id: ' . $productTypeId);
+        }
+        $this->sys_company_id = $productType->sys_company_id;
+        $this->product_type_id = $productType->id;
+        $this->unit_id = $productType->unit_id;
+        if (!$this->save()) {
+            throw new D3ActiveRecordException($this);
+        }
 
         foreach ($this->productType->d3productProductTypeGroups as $typeGroup) {
             $productGroup = new D3productProductGroup();
@@ -157,7 +166,10 @@ class D3productProduct extends BaseD3productProduct
     public function getProductAttributes(): array
     {
         return ArrayHelper::map(
-            D3productAttributes::findAll(['product_id' => $this->id]),
+            D3productAttributes::find()
+                ->where(['product_id' => $this->id])
+                ->andWhere('name != \'' . ModuleConfig::INPUT_TYPE_TEMPLATE_NAME . '\'')
+                ->all(),
             'name',
             'value'
         );
@@ -168,6 +180,9 @@ class D3productProduct extends BaseD3productProduct
      */
     public function unitConvertFromTo(float $qnt, int $fromUnitId, int $toUnitId): ?float
     {
+        if (!$qnt) {
+            return $qnt;
+        }
         if ($fromUnitId === $toUnitId) {
             return $qnt;
         }
@@ -209,5 +224,34 @@ class D3productProduct extends BaseD3productProduct
             ->column();
         $list[] = (string)$this->unit_id;
         return $list;
+    }
+
+    /**
+     * @throws \d3system\exceptions\D3ActiveRecordException
+     */
+    public static function findOrCreate(int $productTypeId, array $attributes): self
+    {
+        if ($product = self::find()
+            ->findByProductAttributes($productTypeId, $attributes)
+            ->one()
+        ) {
+            return $product;
+        }
+
+        $product = new self();
+        $product->createFromProductType($productTypeId);
+        foreach ($product->d3productAttributes as $productAttribute) {
+            if (isset($attributes[$productAttribute->name])) {
+                $productAttribute->value = (string)$attributes[$productAttribute->name];
+                if (!$productAttribute->save()) {
+                    throw new D3ActiveRecordException($productAttribute);
+                }
+            }
+        }
+        $product->name = $product->genName();
+        if (!$product->save()) {
+            throw new D3ActiveRecordException($product);
+        }
+        return $product;
     }
 }
