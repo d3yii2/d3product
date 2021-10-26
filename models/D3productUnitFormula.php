@@ -2,7 +2,7 @@
 
 namespace d3yii2\d3product\models;
 
-use d3modules\d4storei\models\Formulas\BaseFormula;
+use d3yii2\d3product\models\Formulas\BaseFormula;
 use d3yii2\d3product\dictionaries\D3productUnitFormulaDictionary;
 use d3yii2\d3product\models\base\D3productUnitFormula as BaseD3productUnitFormula;
 use yii\base\Exception;

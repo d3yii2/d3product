@@ -19,8 +19,8 @@ class DeskM3ToPcsFormula extends BaseFormula
     {
         return [
             [['length', 'width', 'thickness', 'qnt'], 'required'],
-            [['length', 'width', 'thickness'], 'integer', 'min' => 1, 'max' => 50000],
-            [['qnt'], 'number', 'min' => .001, 'max' => 1000],
+            [['length', 'width', 'thickness'], 'integer', 'min' => 1],
+            [['qnt'], 'number', 'min' => .001],
         ];
     }
 
