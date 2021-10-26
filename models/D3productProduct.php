@@ -56,7 +56,7 @@ class D3productProduct extends BaseD3productProduct
     }
 
     /**
-     * @throws \d3system\exceptions\D3ActiveRecordException
+     * @throws \d3system\exceptions\D3ActiveRecordException|\yii\db\Exception
      */
     public function createFromProductType(int $productTypeId): bool
     {
@@ -167,8 +167,30 @@ class D3productProduct extends BaseD3productProduct
     {
         return ArrayHelper::map(
             D3productAttributes::find()
-                ->where(['product_id' => $this->id])
-                ->andWhere('name != \'' . ModuleConfig::INPUT_TYPE_TEMPLATE_NAME . '\'')
+                ->innerJoin(
+                    'd3product_input_type',
+                    'd3product_input_type.id = d3product_attributes.input_type_id'
+                )
+                ->where(['d3product_attributes.product_id' => $this->id])
+                ->andWhere('d3product_input_type.name != \'' . ModuleConfig::INPUT_TYPE_TEMPLATE_NAME . '\'')
+                ->all(),
+            'name',
+            'value'
+        );
+    }
+
+    public function getProductTemplateAttributes(): array
+    {
+        return ArrayHelper::map(
+            D3productAttributes::find()
+                ->innerJoin(
+                    'd3product_input_type',
+                    'd3product_input_type.id = d3product_attributes.input_type_id'
+                )
+                ->where([
+                    'd3product_attributes.product_id' => $this->id,
+                    'd3product_input_type.name' => ModuleConfig::INPUT_TYPE_TEMPLATE_NAME
+                ])
                 ->all(),
             'name',
             'value'
