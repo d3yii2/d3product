@@ -39,7 +39,7 @@ class DeskPcsToM3Formula extends BaseFormula
         return round(
             $this->qnt
                 * ($this->thickness * $this->width * $this->length)
-                / (1000 * 1000),
+                / (1000 * 1000 * 1000),
             3
         );
     }
