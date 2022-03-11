@@ -6,7 +6,6 @@ namespace d3yii2\d3product\models\base;
 
 use Yii;
 
-
 /**
  * This is the base-model class for table "d3product_product".
  *
@@ -36,18 +35,6 @@ abstract class D3productProduct extends \yii\db\ActiveRecord
         return 'd3product_product';
     }
 
-
-    /**
-     * @inheritdoc
-     */
-    public function behaviors()
-    {
-        $behaviors = [
-        ];
-        return $behaviors;
-    }
-
-
     /**
      * @inheritdoc
      */
@@ -69,12 +56,12 @@ abstract class D3productProduct extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => Yii::t('d3labels', 'ID'),
-            'sys_company_id' => Yii::t('d3labels', 'Sys Company ID'),
-            'name' => Yii::t('d3labels', 'Name'),
-            'description' => Yii::t('d3labels', 'Description'),
-            'unit_id' => Yii::t('d3labels', 'Unit'),
-            'product_type_id' => Yii::t('d3labels', 'Type'),
+            'id' => Yii::t('d3product', 'ID'),
+            'sys_company_id' => Yii::t('d3product', 'Sys Company ID'),
+            'name' => Yii::t('d3product', 'Name'),
+            'description' => Yii::t('d3product', 'Description'),
+            'unit_id' => Yii::t('d3product', 'Unit'),
+            'product_type_id' => Yii::t('d3product', 'Type'),
         ];
     }
 
@@ -84,10 +71,10 @@ abstract class D3productProduct extends \yii\db\ActiveRecord
     public function attributeHints(): array
     {
         return array_merge(parent::attributeHints(), [
-            'name' => Yii::t('d3labels', 'Name'),
-            'description' => Yii::t('d3labels', 'Description'),
-            'unit_id' => Yii::t('d3labels', 'Unit'),
-            'product_type_id' => Yii::t('d3labels', 'Type'),
+            'name' => Yii::t('d3product', 'Name'),
+            'description' => Yii::t('d3product', 'Description'),
+            'unit_id' => Yii::t('d3product', 'Unit'),
+            'product_type_id' => Yii::t('d3product', 'Type'),
         ]);
     }
 

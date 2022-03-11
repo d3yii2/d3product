@@ -95,10 +95,11 @@ class D3productProduct extends BaseD3productProduct
     }
 
     /**
+     * @param string[] $templateAttributesValues new attribute values
      * @throws \d3system\exceptions\D3ActiveRecordException
      * @throws \Throwable
      */
-    public function copy(): self
+    public function copy(array $templateAttributesValues = []): self
     {
 
         /**
@@ -113,12 +114,16 @@ class D3productProduct extends BaseD3productProduct
         }
 
         foreach ($this->d3productAttributes as $attribute) {
+
             if ($attribute->isTemplate()) {
                 continue;
             }
             $attribute->id = null;
             $attribute->isNewRecord = true;
             $attribute->product_id = $model->id;
+            if ($newValue = $templateAttributesValues[$attribute->name]??'') {
+                $attribute->value = $newValue;
+            }
             if (!$attribute->save()) {
                 throw new D3ActiveRecordException($attribute);
             }
@@ -249,7 +254,7 @@ class D3productProduct extends BaseD3productProduct
     }
 
     /**
-     * @throws \d3system\exceptions\D3ActiveRecordException
+     * @throws \d3system\exceptions\D3ActiveRecordException|\yii\db\Exception
      */
     public static function findOrCreate(int $productTypeId, array $attributes): self
     {
