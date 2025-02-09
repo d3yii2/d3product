@@ -11,6 +11,17 @@ class D3productProductTypeDictionary
 
     private const CACHE_KEY_LIST = 'D3productProductTypeDictionaryList';
 
+    /**
+     * get id by name
+     * @param int $sysCompanyId
+     * @param string $name
+     * @return int|null
+     */
+    public static function findIdByName(int $sysCompanyId, string $name): ?int
+    {
+        $id = array_search($name, self::getList($sysCompanyId), true);
+        return $id === false ? null : $id;
+    }
     public static function getList(int $sysCompanyId): array
     {
         return Yii::$app->cache->getOrSet(
