@@ -13,6 +13,10 @@ class Module extends D3Module
 
     /** @var array  */
     public $formulasFieldMapping = [];
+    /**
+     * @var mixed|object|null
+     */
+    public array  $rolesSearchAjax = [];
 
     public function getLabel(): string
     {
