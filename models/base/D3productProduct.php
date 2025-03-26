@@ -5,6 +5,15 @@
 namespace d3yii2\d3product\models\base;
 
 use Yii;
+use d3system\yii2\validators\D3TrimValidator;
+use d3yii2\d3product\models\D3productAttributes;
+use d3yii2\d3product\models\D3productPrice;
+use d3yii2\d3product\models\D3productProductGroup;
+use d3yii2\d3product\models\D3productProductQuery;
+use d3yii2\d3product\models\D3productProductType;
+use d3yii2\d3product\models\D3productUnit;
+use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the base-model class for table "d3product_product".
@@ -16,16 +25,15 @@ use Yii;
  * @property integer $unit_id
  * @property integer $product_type_id
  *
- * @property \d3yii2\d3product\models\D3productAttributes[] $d3productAttributes
- * @property \d3yii2\d3product\models\D3productProductGroup[] $d3productProductGroups
- * @property \d3yii2\d3product\models\D3productProductType $productType
- * @property \d3yii2\d3product\models\D3productUnit $unit
+ * @property D3productAttributes[] $d3productAttributes
+ * @property D3productPrice[] $d3productPrices
+ * @property D3productProductGroup[] $d3productProductGroups
+ * @property D3productProductType $productType
+ * @property D3productUnit $unit
  * @property string $aliasModel
  */
-abstract class D3productProduct extends \yii\db\ActiveRecord
+abstract class D3productProduct extends ActiveRecord
 {
-
-
 
     /**
      * @inheritdoc
@@ -38,22 +46,24 @@ abstract class D3productProduct extends \yii\db\ActiveRecord
     /**
      * @inheritdoc
      */
-    public function rules()
+    public function rules(): array
     {
         return [
+            'trimNumbers' => [['id','sys_company_id','unit_id','product_type_id'],D3TrimValidator::class, 'trimOnlyStringValues' => true],
             'required' => [['sys_company_id'], 'required'],
             'smallint Unsigned' => [['id','sys_company_id','unit_id','product_type_id'],'integer' ,'min' => 0 ,'max' => 65535],
+            [['name', 'description', 'unit_id', 'product_type_id'], 'default', 'value' => null],
             [['description'], 'string'],
             [['name'], 'string', 'max' => 256],
-            [['unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3product\models\D3productUnit::className(), 'targetAttribute' => ['unit_id' => 'id']],
-            [['product_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => \d3yii2\d3product\models\D3productProductType::className(), 'targetAttribute' => ['product_type_id' => 'id']]
+            [['unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => D3productUnit::class, 'targetAttribute' => ['unit_id' => 'id']],
+            [['product_type_id'], 'exist', 'skipOnError' => true, 'targetClass' => D3productProductType::class, 'targetAttribute' => ['product_type_id' => 'id']]
         ];
     }
 
     /**
      * @inheritdoc
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => Yii::t('d3product', 'ID'),
@@ -79,46 +89,60 @@ abstract class D3productProduct extends \yii\db\ActiveRecord
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getD3productAttributes()
+    public function getD3productAttributes(): ActiveQuery
     {
-        return $this->hasMany(\d3yii2\d3product\models\D3productAttributes::className(), ['product_id' => 'id'])->inverseOf('product');
+        return $this
+            ->hasMany(D3productAttributes::class, ['product_id' => 'id'])
+            ->inverseOf('product');
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getD3productProductGroups()
+    public function getD3productPrices(): ActiveQuery
     {
-        return $this->hasMany(\d3yii2\d3product\models\D3productProductGroup::className(), ['product_id' => 'id'])->inverseOf('product');
+        return $this
+            ->hasMany(D3productPrice::class, ['product_id' => 'id'])
+            ->inverseOf('product');
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getProductType()
+    public function getD3productProductGroups(): ActiveQuery
     {
-        return $this->hasOne(\d3yii2\d3product\models\D3productProductType::className(), ['id' => 'product_type_id'])->inverseOf('d3productProducts');
+        return $this
+            ->hasMany(D3productProductGroup::class, ['product_id' => 'id'])
+            ->inverseOf('product');
     }
 
     /**
-     * @return \yii\db\ActiveQuery
+     * @return ActiveQuery
      */
-    public function getUnit()
+    public function getProductType(): ActiveQuery
     {
-        return $this->hasOne(\d3yii2\d3product\models\D3productUnit::className(), ['id' => 'unit_id'])->inverseOf('d3productProducts');
+        return $this
+            ->hasOne(D3productProductType::class, ['id' => 'product_type_id'])
+            ->inverseOf('d3productProducts');
     }
 
+    /**
+     * @return ActiveQuery
+     */
+    public function getUnit(): ActiveQuery
+    {
+        return $this
+            ->hasOne(D3productUnit::class, ['id' => 'unit_id'])
+            ->inverseOf('d3productProducts');
+    }
 
-    
     /**
      * @inheritdoc
-     * @return \d3yii2\d3product\models\D3productProductQuery the active query used by this AR class.
+     * @return D3productProductQuery the active query used by this AR class.
      */
-    public static function find()
-    {
-        return new \d3yii2\d3product\models\D3productProductQuery(get_called_class());
+    public static function find(): D3productProductQuery    {
+        return new D3productProductQuery(get_called_class());
     }
-
 }
