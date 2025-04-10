@@ -6,7 +6,9 @@ use d3modules\d3productadmin\models\D3productAttributes;
 use d3modules\d3productadmin\ModuleConfig;
 use d3system\exceptions\D3ActiveRecordException;
 use d3yii2\d3product\models\base\D3productProduct as BaseD3productProduct;
+use Throwable;
 use yii\db\Exception;
+use yii\db\StaleObjectException;
 use yii\helpers\ArrayHelper;
 
 /**
@@ -14,9 +16,10 @@ use yii\helpers\ArrayHelper;
  */
 class D3productProduct extends BaseD3productProduct
 {
+    private ?array $productAttributesValues = null;
 
     /**
-     * @throws \yii\db\Exception
+     * @throws Exception
      */
     public function beforeSave($insert): bool
     {
@@ -31,8 +34,8 @@ class D3productProduct extends BaseD3productProduct
 
     /**
      * @return false|int
-     * @throws \Throwable
-     * @throws \yii\db\StaleObjectException
+     * @throws Throwable
+     * @throws StaleObjectException
      */
 
     public function delete()
@@ -56,7 +59,7 @@ class D3productProduct extends BaseD3productProduct
     }
 
     /**
-     * @throws \d3system\exceptions\D3ActiveRecordException|\yii\db\Exception
+     * @throws D3ActiveRecordException|Exception
      */
     public function createFromProductType(int $productTypeId): bool
     {
@@ -90,18 +93,16 @@ class D3productProduct extends BaseD3productProduct
                 throw new D3ActiveRecordException($productAttribute);
             }
         }
-
         return true;
     }
 
     /**
      * @param string[] $templateAttributesValues new attribute values
-     * @throws \d3system\exceptions\D3ActiveRecordException
-     * @throws \Throwable
+     * @throws D3ActiveRecordException
+     * @throws Throwable
      */
     public function copy(array $templateAttributesValues = []): self
     {
-
         /**
          * shis te kopee ari saistitos ierkastus - mistika
          */
@@ -254,7 +255,7 @@ class D3productProduct extends BaseD3productProduct
     }
 
     /**
-     * @throws \d3system\exceptions\D3ActiveRecordException|\yii\db\Exception
+     * @throws D3ActiveRecordException|Exception
      */
     public static function findOrCreate(int $productTypeId, array $attributes): self
     {
@@ -280,5 +281,13 @@ class D3productProduct extends BaseD3productProduct
             throw new D3ActiveRecordException($product);
         }
         return $product;
+    }
+
+    public function getProductAttributeValue(string $attributeName): ?string
+    {
+        if ($this->productAttributesValues === null) {
+            $this->productAttributesValues = ArrayHelper::map($this->d3productAttributes, 'name', 'value');
+        }
+        return $this->productAttributesValues[$attributeName] ?? null;
     }
 }
