@@ -171,18 +171,21 @@ class D3productProduct extends BaseD3productProduct
      */
     public function getProductAttributes(): array
     {
-        return ArrayHelper::map(
-            D3productAttributes::find()
-                ->innerJoin(
-                    'd3product_input_type',
-                    'd3product_input_type.id = d3product_attributes.input_type_id'
-                )
-                ->where(['d3product_attributes.product_id' => $this->id])
-                ->andWhere('d3product_input_type.name != \'' . ModuleConfig::INPUT_TYPE_TEMPLATE_NAME . '\'')
-                ->all(),
-            'name',
-            'value'
-        );
+        if ($this->productAttributesValues === null) {
+            $this->productAttributesValues = ArrayHelper::map(
+                D3productAttributes::find()
+                    ->innerJoin(
+                        'd3product_input_type',
+                        'd3product_input_type.id = d3product_attributes.input_type_id'
+                    )
+                    ->where(['d3product_attributes.product_id' => $this->id])
+                    ->andWhere('d3product_input_type.name != \'' . ModuleConfig::INPUT_TYPE_TEMPLATE_NAME . '\'')
+                    ->all(),
+                'name',
+                'value'
+            );
+        }
+        return $this->productAttributesValues;
     }
 
     public function getProductTemplateAttributes(): array
@@ -285,9 +288,16 @@ class D3productProduct extends BaseD3productProduct
 
     public function getProductAttributeValue(string $attributeName): ?string
     {
-        if ($this->productAttributesValues === null) {
-            $this->productAttributesValues = ArrayHelper::map($this->d3productAttributes, 'name', 'value');
-        }
-        return $this->productAttributesValues[$attributeName] ?? null;
+        return $this->getProductAttributes()[$attributeName] ?? null;
+    }
+
+    public function getProductAttributeByRegex(string $regex): ?string
+    {
+         foreach ($this->getProductAttributes() as $attributeName => $attributeValue) {
+             if (preg_match($regex, $attributeName)) {
+                 return $attributeValue;
+             }
+         }
+         return null;
     }
 }
